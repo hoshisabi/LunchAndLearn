@@ -46,25 +46,25 @@ The application manages a simple issue tracking system with endpoints to query i
 
 ### 1. Clone the Repository
 
-```bash
-git clone <repository-url>
+```powershell
+git clone https://github.com/hoshisabi/LunchAndLearn.git
 cd LunchAndLearn
 ```
 
 ### 2. Install uv (Python Package Manager)
 
-**Windows (PowerShell):**
+**Windows:**
 ```powershell
-powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+winget install astral-sh.uv
 ```
 
 **Alternative (using pip):**
-```bash
+```powershell
 pip install uv
 ```
 
 **Verify installation:**
-```bash
+```powershell
 uv --version
 ```
 
@@ -75,7 +75,7 @@ For more installation options, visit: https://github.com/astral-sh/uv
 The project uses `uv` to manage Python dependencies. The first time you run a Python script, `uv` will automatically create a virtual environment and install dependencies.
 
 To manually set up the environment:
-```bash
+```powershell
 cd LunchAndLearn
 uv sync
 ```
@@ -95,12 +95,12 @@ This will:
    - This includes the C# extension, IntelliCode, and other helpful tools
 
 2. Restore NuGet packages:
-   ```bash
+   ```powershell
    dotnet restore
    ```
 
 3. Build the solution:
-   ```bash
+   ```powershell
    dotnet build
    ```
 
@@ -114,7 +114,7 @@ This will:
 
 Before running the application, seed the database with sample data:
 
-```bash
+```powershell
 cd LunchAndLearn
 uv run python seed_database.py
 ```
@@ -129,7 +129,7 @@ This will create `issues.db` (if it doesn't exist) and populate it with 5 sample
 
 **From the `LunchAndLearn` directory:**
 
-```bash
+```powershell
 dotnet run
 ```
 
@@ -139,7 +139,7 @@ The API will start on `http://localhost:5099` (HTTP) or `https://localhost:7181`
 
 **Using the Python client:**
 
-```bash
+```powershell
 # List all issues (table format)
 uv run python client.py
 
@@ -161,7 +161,7 @@ uv run python client.py --url http://localhost:7181
 
 **Using curl or a browser:**
 
-```bash
+```powershell
 # Get all issues
 curl http://localhost:5099/issues
 
@@ -182,13 +182,13 @@ Or simply open `http://localhost:5099/issues` in your browser.
 
 Run all unit tests:
 
-```bash
+```powershell
 dotnet test
 ```
 
 Or run tests for a specific project:
 
-```bash
+```powershell
 dotnet test LunchAndLearn.Tests/LunchAndLearn.Tests.csproj
 ```
 
@@ -205,33 +205,33 @@ Expected output:
 To verify the application is working end-to-end:
 
 1. **Build the solution (Debug):**
-   ```bash
+   ```powershell
    dotnet build
    ```
    ✅ Should complete successfully with no compilation errors
 
 2. **Build the solution (Release):**
-   ```bash
+   ```powershell
    dotnet build -c Release
    ```
    ✅ Should complete successfully, confirming production-ready code
 
 3. **Run the API server:**
-   ```bash
+   ```powershell
    cd LunchAndLearn
    dotnet run
    ```
    ✅ Should output: `Now listening on: http://localhost:5099`
 
 4. **In another terminal, seed the database:**
-   ```bash
+   ```powershell
    cd LunchAndLearn
    uv run python seed_database.py
    ```
    ✅ Should confirm: `Successfully seeded the database`
 
 5. **Test the API endpoints:**
-   ```bash
+   ```powershell
    # Get all issues
    uv run python client.py
    
@@ -300,7 +300,7 @@ This project is designed to demonstrate various AI-powered code assistance tools
 - **Prerequisites:** GitHub CLI installed (`gh`)
 
 **Installation & Setup:**
-```bash
+```powershell
 # 1. Install GitHub CLI if you don't have it
 # Windows (using Winget):
 winget install GitHub.Copilot
@@ -319,7 +319,7 @@ gh copilot --version
 ```
 
 **Basic Usage:**
-```bash
+```powershell
 # Ask Copilot a question about code
 gh copilot explain "what does this code do?"
 
@@ -350,6 +350,7 @@ If your institution uses GitHub Enterprise with GitHub Copilot, you may be able 
 - **Claude** (Anthropic's AI assistant)
 - **Codeium** (free alternative to Copilot)
 - **Tabnine** (AI code completion)
+- **Ollama** (Install LLMs on your local machine for fully self-contained work)
 
 ---
 
