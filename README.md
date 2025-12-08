@@ -9,7 +9,7 @@ This is a simple web API application built with:
 - **SQLite** - Lightweight database for storing issue data
 - **Python** - Utility scripts for database seeding and API client testing
 
-The application manages a simple issue tracking system with endpoints to query issues and filter by urgency. It serves as a practical example for exploring how different AI code assistants can help with various development tasks.
+The application manages a simple issue tracking system with endpoints to query issues and filter by priority level. It serves as a practical example for exploring how different AI code assistants can help with various development tasks.
 
 ---
 
@@ -143,16 +143,19 @@ The API will start on `http://localhost:5099` (HTTP) or `https://localhost:7181`
 # List all issues (table format)
 uv run python client.py
 
-# Show only urgent issues
-uv run python client.py --urgent
+# Show only high priority issues
+uv run python client.py --priority high
 
-# Show only non-urgent issues
-uv run python client.py --no-urgent
+# Show only medium priority issues
+uv run python client.py --priority medium
+
+# Show only low priority issues
+uv run python client.py --priority low
 
 # Output as JSON
 uv run python client.py --format json
 
-# Simple one-line format
+# Simple one-line format with priority indicators (🔴=High, 🟡=Medium, 🟢=Low)
 uv run python client.py --format simple
 
 # Use a different URL
@@ -165,11 +168,14 @@ uv run python client.py --url http://localhost:7181
 # Get all issues
 curl http://localhost:5099/issues
 
-# Get only urgent issues
-curl "http://localhost:5099/issues?urgent=true"
+# Get only high priority issues
+curl "http://localhost:5099/issues?priority=high"
 
-# Get only non-urgent issues
-curl "http://localhost:5099/issues?urgent=false"
+# Get only medium priority issues
+curl "http://localhost:5099/issues?priority=medium"
+
+# Get only low priority issues
+curl "http://localhost:5099/issues?priority=low"
 ```
 
 Or simply open `http://localhost:5099/issues` in your browser.
@@ -193,11 +199,11 @@ dotnet test LunchAndLearn.Tests/LunchAndLearn.Tests.csproj
 ```
 
 Expected output:
-- **7 total tests** should pass
+- **8 total tests** should pass
 - Tests cover:
-  - Issue model creation and equality
+  - Issue model creation with different priority levels (High, Medium, Low)
   - Database operations (add, query, filtering)
-  - Filtering by urgency
+  - Filtering by priority (High, Medium, Low)
   - Primary key constraints
 
 ### Manual Testing
@@ -235,13 +241,16 @@ To verify the application is working end-to-end:
    # Get all issues
    uv run python client.py
    
-   # Filter for urgent issues only
-   uv run python client.py --urgent
+   # Filter for high priority issues only
+   uv run python client.py --priority high
    
-   # Filter for non-urgent issues only
-   uv run python client.py --no-urgent
+   # Filter for medium priority issues only
+   uv run python client.py --priority medium
+   
+   # Filter for low priority issues only
+   uv run python client.py --priority low
    ```
-   ✅ Should return a formatted table of issues with all fields populated
+   ✅ Should return a formatted table of issues with priority levels displayed
 
 ---
 
@@ -251,18 +260,55 @@ To verify the application is working end-to-end:
 LunchAndLearn/
 ├── LunchAndLearn/              # Main C# API project
 │   ├── Program.cs              # API entry point and endpoints
-│   ├── Issue.cs                # Issue entity model
+│   ├── Issue.cs                # Issue entity model (uses Priority enum)
+│   ├── Priority.cs             # Priority enum (Low, Medium, High)
 │   ├── IssueDbContext.cs       # Entity Framework DbContext
 │   ├── client.py               # Python API client
 │   ├── seed_database.py        # Database seeding script
+│   ├── migrate_to_priority.py  # Migration script (IsUrgent boolean → Priority enum)
 │   └── issues.db               # SQLite database (created on first run)
 │
 ├── LunchAndLearn.Tests/        # Unit tests
-│   ├── IssueTests.cs           # Issue model tests
-│   └── IssueDbContextTests.cs  # Database context tests
+│   ├── IssueTests.cs           # Issue model tests (Priority enum)
+│   └── IssueDbContextTests.cs  # Database context tests (Priority filtering)
 │
 └── README.md                   # This file
 ```
+
+---
+
+## Priority System
+
+The application uses a three-level priority system:
+
+| Level | Value | Use Case |
+|-------|-------|----------|
+| **High** | 2 | Critical issues requiring immediate attention |
+| **Medium** | 1 | Important issues to be addressed soon |
+| **Low** | 0 | Nice-to-have improvements or minor issues |
+
+### Database Migration
+
+If you have an existing database from a previous version (using `IsUrgent` boolean), use the migration script:
+
+```bash
+cd LunchAndLearn
+
+# Run migration with automatic backup
+uv run python migrate_to_priority.py
+
+# Rollback to previous state if needed
+uv run python migrate_to_priority.py --rollback
+
+# Run without creating a backup (not recommended)
+uv run python migrate_to_priority.py --no-backup
+```
+
+The migration script will:
+- Automatically create a timestamped backup before migration
+- Convert `IsUrgent=1` → `Priority=2 (High)`
+- Convert `IsUrgent=0` → `Priority=1 (Medium)`
+- Provide detailed reporting of the conversion
 
 ---
 
