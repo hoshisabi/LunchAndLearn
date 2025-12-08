@@ -178,6 +178,8 @@ Or simply open `http://localhost:5099/issues` in your browser.
 
 ## Running Tests
 
+### Unit Tests
+
 Run all unit tests:
 
 ```bash
@@ -189,6 +191,57 @@ Or run tests for a specific project:
 ```bash
 dotnet test LunchAndLearn.Tests/LunchAndLearn.Tests.csproj
 ```
+
+Expected output:
+- **7 total tests** should pass
+- Tests cover:
+  - Issue model creation and equality
+  - Database operations (add, query, filtering)
+  - Filtering by urgency
+  - Primary key constraints
+
+### Manual Testing
+
+To verify the application is working end-to-end:
+
+1. **Build the solution (Debug):**
+   ```bash
+   dotnet build
+   ```
+   ✅ Should complete successfully with no compilation errors
+
+2. **Build the solution (Release):**
+   ```bash
+   dotnet build -c Release
+   ```
+   ✅ Should complete successfully, confirming production-ready code
+
+3. **Run the API server:**
+   ```bash
+   cd LunchAndLearn
+   dotnet run
+   ```
+   ✅ Should output: `Now listening on: http://localhost:5099`
+
+4. **In another terminal, seed the database:**
+   ```bash
+   cd LunchAndLearn
+   uv run python seed_database.py
+   ```
+   ✅ Should confirm: `Successfully seeded the database`
+
+5. **Test the API endpoints:**
+   ```bash
+   # Get all issues
+   uv run python client.py
+   
+   # Filter for urgent issues only
+   uv run python client.py --urgent
+   
+   # Filter for non-urgent issues only
+   uv run python client.py --no-urgent
+   ```
+   ✅ Should return a formatted table of issues with all fields populated
 
 ---
 
