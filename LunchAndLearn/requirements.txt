@@ -1,16 +1,26 @@
-# Python dependencies for database seeding script
-# No external dependencies required - uses built-in sqlite3 module
+# Python dependencies for LunchAndLearn tools
+# - requests: For API client (client.py)
+# - sqlite3: Built-in module for database seeding (seed_database.py)
 #
 # This project uses 'uv' for virtual environment management.
 # To set up the environment:
 #   uv venv
 #   uv sync
 #
-# To run the seeding script:
+# Available tools:
+#
+# Database seeding:
 #   uv run python seed_database.py
+#
+# API client:
+#   uv run python client.py                    # List all issues
+#   uv run python client.py --format json      # Output as JSON
+#   uv run python client.py --format simple    # Simple format
+#   uv run python client.py --url http://localhost:7181  # Custom URL
 #
 # Or activate the venv and run directly:
 #   .venv\Scripts\activate  (Windows)
 #   source .venv/bin/activate  (Linux/Mac)
 #   python seed_database.py
+#   python client.py
 

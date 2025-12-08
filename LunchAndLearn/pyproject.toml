@@ -1,7 +1,9 @@
 [project]
-name = "lunch-and-learn-seeder"
+name = "lunch-and-learn-tools"
 version = "0.1.0"
-description = "Database seeding script for LunchAndLearn application"
+description = "Python tools for LunchAndLearn application (seeding and API client)"
 requires-python = ">=3.8"
-dependencies = []
+dependencies = [
+    "requests>=2.31.0",
+]
 

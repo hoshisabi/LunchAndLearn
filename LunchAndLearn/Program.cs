@@ -29,9 +29,20 @@ using (var scope = app.Services.CreateScope())
 
 app.UseHttpsRedirection();
 
-app.MapGet("/issues", async (IssueDbContext dbContext) =>
+app.MapGet("/issues", async (IssueDbContext dbContext, HttpContext httpContext) =>
 {
-    return await dbContext.Issues.ToListAsync();
+    var query = dbContext.Issues.AsQueryable();
+    
+    // Check for urgent filter in query string
+    if (httpContext.Request.Query.TryGetValue("urgent", out var urgentValue))
+    {
+        if (bool.TryParse(urgentValue.ToString(), out var urgent))
+        {
+            query = query.Where(i => i.IsUrgent == urgent);
+        }
+    }
+    
+    return await query.ToListAsync();
 })
 .WithName("GetIssues");  // Updated name for clarity
 

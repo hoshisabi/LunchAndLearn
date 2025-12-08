@@ -1,6 +1,15 @@
 @LunchAndLearn_HostAddress = http://localhost:5099
 
-GET {{LunchAndLearn_HostAddress}}/issues/
+### Get all issues
+GET {{LunchAndLearn_HostAddress}}/issues
+Accept: application/json
+
+### Get only urgent issues
+GET {{LunchAndLearn_HostAddress}}/issues?urgent=true
+Accept: application/json
+
+### Get only non-urgent issues
+GET {{LunchAndLearn_HostAddress}}/issues?urgent=false
 Accept: application/json
 
 ###
