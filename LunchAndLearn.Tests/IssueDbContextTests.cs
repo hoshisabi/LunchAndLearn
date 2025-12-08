@@ -24,7 +24,7 @@ public class IssueDbContextTests : IDisposable
             "ISSUE-TEST-001",
             "Test Issue",
             "This is a test issue",
-            false
+            Priority.Medium
         );
 
         // Act
@@ -39,30 +39,30 @@ public class IssueDbContextTests : IDisposable
     }
 
     [Fact]
-    public async Task QueryIssues_ShouldFilterByUrgent()
+    public async Task QueryIssues_ShouldFilterByPriority()
     {
         // Arrange
-        var urgentIssue = new Issue("ISSUE-URGENT", "Urgent", "Urgent issue", true);
-        var normalIssue = new Issue("ISSUE-NORMAL", "Normal", "Normal issue", false);
+        var highIssue = new Issue("ISSUE-HIGH", "High", "High priority issue", Priority.High);
+        var lowIssue = new Issue("ISSUE-LOW", "Low", "Low priority issue", Priority.Low);
 
-        _context.Issues.AddRange(urgentIssue, normalIssue);
+        _context.Issues.AddRange(highIssue, lowIssue);
         await _context.SaveChangesAsync();
 
         // Act
-        var urgentIssues = await _context.Issues
-            .Where(i => i.IsUrgent == true)
+        var highIssues = await _context.Issues
+            .Where(i => i.Priority == Priority.High)
             .ToListAsync();
 
-        var normalIssues = await _context.Issues
-            .Where(i => i.IsUrgent == false)
+        var lowIssues = await _context.Issues
+            .Where(i => i.Priority == Priority.Low)
             .ToListAsync();
 
         // Assert
-        Assert.Single(urgentIssues);
-        Assert.Equal("ISSUE-URGENT", urgentIssues[0].Code);
+        Assert.Single(highIssues);
+        Assert.Equal("ISSUE-HIGH", highIssues[0].Code);
         
-        Assert.Single(normalIssues);
-        Assert.Equal("ISSUE-NORMAL", normalIssues[0].Code);
+        Assert.Single(lowIssues);
+        Assert.Equal("ISSUE-LOW", lowIssues[0].Code);
     }
 
     [Fact]
@@ -71,9 +71,9 @@ public class IssueDbContextTests : IDisposable
         // Arrange
         var issues = new[]
         {
-            new Issue("ISSUE-001", "First", "First issue", true),
-            new Issue("ISSUE-002", "Second", "Second issue", false),
-            new Issue("ISSUE-003", "Third", "Third issue", true)
+            new Issue("ISSUE-001", "First", "First issue", Priority.High),
+            new Issue("ISSUE-002", "Second", "Second issue", Priority.Low),
+            new Issue("ISSUE-003", "Third", "Third issue", Priority.Medium)
         };
 
         _context.Issues.AddRange(issues);
@@ -90,7 +90,7 @@ public class IssueDbContextTests : IDisposable
     public async Task Issue_CodeIsPrimaryKey()
     {
         // Arrange
-        var issue1 = new Issue("ISSUE-001", "Test", "Test", false);
+        var issue1 = new Issue("ISSUE-001", "Test", "Test", Priority.Low);
         _context.Issues.Add(issue1);
         await _context.SaveChangesAsync();
         
@@ -99,7 +99,7 @@ public class IssueDbContextTests : IDisposable
 
         // Act & Assert - Try to add duplicate code should fail
         // Note: InMemory database throws ArgumentException, not DbUpdateException
-        var issue2 = new Issue("ISSUE-001", "Duplicate", "Duplicate", true);
+        var issue2 = new Issue("ISSUE-001", "Duplicate", "Duplicate", Priority.High);
         _context.Issues.Add(issue2);
         
         await Assert.ThrowsAsync<ArgumentException>(async () => 

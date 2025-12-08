@@ -43,20 +43,21 @@ def seed_database(db_path: str = "issues.db"):
         
         # Seed data
         issues = [
-            ("ISSUE-001", "Login button not working", 
-             "Users report that the login button is unresponsive on mobile devices.", 0),
-            ("ISSUE-002", "Performance lag", 
-             "App slows down after extended use, possibly due to memory leak.", 1),
-            ("ISSUE-003", "UI misalignment", 
-             "Elements are misaligned on high-resolution screens.", 0),
-            ("ISSUE-004", "Security vulnerability", 
-             "Potential SQL injection in search query.", 1),
-            ("ISSUE-005", "Feature request: Dark mode", 
-             "Users want a dark mode toggle.", 0),
+            ("ISSUE-001", "Login button not working",
+             "Users report that the login button is unresponsive on mobile devices.", 2),  # High
+            ("ISSUE-002", "Performance lag",
+             "App slows down after extended use, possibly due to memory leak.", 1),  # Medium
+            ("ISSUE-003", "UI misalignment",
+             "Elements are misaligned on high-resolution screens.", 0),  # Low
+            ("ISSUE-004", "Security vulnerability",
+             "Potential SQL injection in search query.", 2),  # High
+            ("ISSUE-005", "Feature request: Dark mode",
+             "Users want a dark mode toggle.", 0),  # Low
         ]
         
+        # Insert with new Priority column (enum stored as int: 0=Low,1=Medium,2=High)
         cursor.executemany(
-            "INSERT INTO Issues (Code, ShortDescription, LongDescription, IsUrgent) VALUES (?, ?, ?, ?)",
+            "INSERT INTO Issues (Code, ShortDescription, LongDescription, Priority) VALUES (?, ?, ?, ?)",
             issues
         )
         

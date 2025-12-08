@@ -9,7 +9,7 @@ This is a simple web API application built with:
 - **SQLite** - Lightweight database for storing issue data
 - **Python** - Utility scripts for database seeding and API client testing
 
-The application manages a simple issue tracking system with endpoints to query issues and filter by urgency. It serves as a practical example for exploring how different AI code assistants can help with various development tasks.
+The application manages a simple issue tracking system with endpoints to query issues and filter by priority (High, Medium, Low). It serves as a practical example for exploring how different AI code assistants can help with various development tasks.
 
 ---
 
@@ -143,11 +143,11 @@ The API will start on `http://localhost:5099` (HTTP) or `https://localhost:7181`
 # List all issues (table format)
 uv run python client.py
 
-# Show only urgent issues
-uv run python client.py --urgent
+# Show only HIGH priority issues
+uv run python client.py --priority HIGH
 
-# Show only non-urgent issues
-uv run python client.py --no-urgent
+# Show only LOW priority issues
+uv run python client.py --priority LOW
 
 # Output as JSON
 uv run python client.py --format json
@@ -165,11 +165,11 @@ uv run python client.py --url http://localhost:7181
 # Get all issues
 curl http://localhost:5099/issues
 
-# Get only urgent issues
-curl "http://localhost:5099/issues?urgent=true"
+# Get only HIGH priority issues
+curl "http://localhost:5099/issues?priority=HIGH"
 
-# Get only non-urgent issues
-curl "http://localhost:5099/issues?urgent=false"
+# Get only LOW priority issues
+curl "http://localhost:5099/issues?priority=LOW"
 ```
 
 Or simply open `http://localhost:5099/issues` in your browser.
@@ -202,6 +202,7 @@ LunchAndLearn/
 │   ├── IssueDbContext.cs       # Entity Framework DbContext
 │   ├── client.py               # Python API client
 │   ├── seed_database.py        # Database seeding script
+│   ├── migrate_to_priority.py  # Migration: IsUrgent -> Priority (High/Medium/Low)
 │   └── issues.db               # SQLite database (created on first run)
 │
 ├── LunchAndLearn.Tests/        # Unit tests
@@ -209,6 +210,38 @@ LunchAndLearn/
 │   └── IssueDbContextTests.cs  # Database context tests
 │
 └── README.md                   # This file
+```
+
+---
+
+## Database Migration: Urgent -> Priority
+
+This project evolved from a simple `IsUrgent` boolean to a richer `Priority` enum with values `High`, `Medium`, and `Low`.
+
+### What changed
+- C# model now defines `public enum Priority { Low=0, Medium=1, High=2 }` and `Issue.Priority` replaces `Issue.IsUrgent`.
+- API accepts `priority` query parameter (case-insensitive): `HIGH`, `MEDIUM`, `LOW`.
+- JSON responses include a `priority` field with string values.
+- Seed script writes the `Priority` column.
+
+### How to migrate an existing database
+If you have an existing `issues.db` created before this change, run the migration script:
+
+```bash
+# From LunchAndLearn directory
+uv run python migrate_to_priority.py            # uses default issues.db
+uv run python migrate_to_priority.py my.db      # or pass a custom path
+```
+
+Migration rules:
+- `IsUrgent = 1` becomes `Priority = High`.
+- `IsUrgent = 0` becomes `Priority = Low`.
+- The script is idempotent and keeps the old `IsUrgent` column for backward compatibility.
+
+After migration, you may reseed new databases with:
+
+```bash
+uv run python seed_database.py
 ```
 
 ---

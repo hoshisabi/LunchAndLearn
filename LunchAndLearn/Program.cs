@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using LunchAndLearn;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,8 @@ builder.Services.AddOpenApi();
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    // Serialize enums (e.g., Priority) as strings
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
 // Add DbContext for SQLite
@@ -40,12 +43,13 @@ app.MapGet("/issues", async (IssueDbContext dbContext, HttpContext httpContext) 
 {
     var query = dbContext.Issues.AsQueryable();
     
-    // Check for urgent filter in query string
-    if (httpContext.Request.Query.TryGetValue("urgent", out var urgentValue))
+    // Check for priority filter in query string (HIGH|MEDIUM|LOW)
+    if (httpContext.Request.Query.TryGetValue("priority", out var priorityValue))
     {
-        if (bool.TryParse(urgentValue.ToString(), out var urgent))
+        var raw = priorityValue.ToString();
+        if (!string.IsNullOrWhiteSpace(raw) && Enum.TryParse<Priority>(raw, true, out var prio))
         {
-            query = query.Where(i => i.IsUrgent == urgent);
+            query = query.Where(i => i.Priority == prio);
         }
     }
     
