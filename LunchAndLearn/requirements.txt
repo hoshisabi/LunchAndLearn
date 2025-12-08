@@ -1,0 +1,16 @@
+# Python dependencies for database seeding script
+# No external dependencies required - uses built-in sqlite3 module
+#
+# This project uses 'uv' for virtual environment management.
+# To set up the environment:
+#   uv venv
+#   uv sync
+#
+# To run the seeding script:
+#   uv run python seed_database.py
+#
+# Or activate the venv and run directly:
+#   .venv\Scripts\activate  (Windows)
+#   source .venv/bin/activate  (Linux/Mac)
+#   python seed_database.py
+

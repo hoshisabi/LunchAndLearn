@@ -1,0 +1,7 @@
+[project]
+name = "lunch-and-learn-seeder"
+version = "0.1.0"
+description = "Database seeding script for LunchAndLearn application"
+requires-python = ">=3.8"
+dependencies = []
+

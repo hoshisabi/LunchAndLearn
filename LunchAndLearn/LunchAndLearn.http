@@ -1,6 +1,6 @@
 @LunchAndLearn_HostAddress = http://localhost:5099
 
-GET {{LunchAndLearn_HostAddress}}/weatherforecast/
+GET {{LunchAndLearn_HostAddress}}/issues/
 Accept: application/json
 
 ###

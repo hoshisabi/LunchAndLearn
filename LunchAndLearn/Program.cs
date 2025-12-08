@@ -1,8 +1,15 @@
+using Microsoft.EntityFrameworkCore;
+using LunchAndLearn;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+// Add DbContext for SQLite
+builder.Services.AddDbContext<IssueDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=issues.db"));
 
 var app = builder.Build();
 
@@ -12,30 +19,20 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+// Ensure database is created
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<IssueDbContext>();
+    dbContext.Database.EnsureCreated();  // Creates the DB if it doesn't exist
+    // Note: Database seeding is handled by seed_database.py
+}
+
 app.UseHttpsRedirection();
 
-var summaries = new[]
+app.MapGet("/issues", async (IssueDbContext dbContext) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-    {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast");
+    return await dbContext.Issues.ToListAsync();
+})
+.WithName("GetIssues");  // Updated name for clarity
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
