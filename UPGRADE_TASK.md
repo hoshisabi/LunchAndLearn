@@ -10,20 +10,27 @@ Enhance the issue tracking system to support a three-level priority system (HIGH
 ### Subtask 1a: Create Priority Enum (2-3 min)
 **File**: `LunchAndLearn/Priority.cs` (NEW)
 
-Create a priority enum with three values:
+Create a priority enum with three values using uppercase naming:
 ```csharp
+namespace LunchAndLearn;
+
 public enum Priority
 {
-    Low = 0,
-    Medium = 1,
-    High = 2
+    LOW,
+    MEDIUM,
+    HIGH
 }
 ```
 
+**Important notes**:
+- Use uppercase enum values: `LOW`, `MEDIUM`, `HIGH` (not `Low`, `Medium`, `High`)
+- Do not specify explicit numeric values - let C# auto-assign 0, 1, 2
+- File should be created in the `LunchAndLearn/` directory (same location as `Issue.cs`)
+
 **What the AI tool should do**:
-- Create the new file
-- Define the enum with correct values
-- Add to the LunchAndLearn namespace
+- Create the new file in `LunchAndLearn/` directory
+- Define the enum with uppercase values (LOW, MEDIUM, HIGH)
+- Add to the `LunchAndLearn` namespace
 
 ---
 
@@ -35,13 +42,19 @@ public enum Priority
 **Changes needed**:
 1. Update `Issue` record to use `Priority Priority` instead of `bool IsUrgent`
 2. Update `IssueDbContext.OnModelCreating()` to:
-   - Configure Priority as integer enum in database
-   - Set default value to Medium
+   - Configure Priority to be stored as **string** in database using `.HasConversion<string>()`
+   - This allows Python migration scripts to work with string values ('HIGH', 'MEDIUM', 'LOW')
+   - Optional: Set default value to `Priority.Medium` using `.HasDefaultValue(Priority.Medium)` (not required for demo)
+
+**Important notes**:
+- Store enum as **string** (not integer) for Python compatibility
+- Use `.HasConversion<string>()` method in Entity Framework configuration
+- The string storage format makes it easier for Python scripts to read/write priority values
 
 **What the AI tool should do**:
-- Replace the IsUrgent property with Priority property
-- Update the database configuration for the enum
-- Ensure Entity Framework properly maps the enum
+- Replace the `IsUrgent` property with `Priority` property in `Issue.cs`
+- Update `IssueDbContext.OnModelCreating()` to configure Priority with string conversion
+- Ensure Entity Framework properly maps the enum to a string column in SQLite
 
 ---
 
@@ -50,27 +63,51 @@ public enum Priority
 
 **Changes needed**:
 - Update `/issues` endpoint to filter by `?priority=low|medium|high` instead of `?urgent=true|false`
-- Use `Enum.TryParse<Priority>()` for parsing the query parameter
+- Use `Enum.TryParse<Priority>(value, ignoreCase: true, out var priority)` for parsing the query parameter
+- Query parameter should accept lowercase, uppercase, or mixed case (e.g., 'high', 'HIGH', 'High' all work)
+
+**Important notes**:
+- **Must use `ignoreCase: true`** in `Enum.TryParse` to handle case-insensitive input
+- The existing `JsonNamingPolicy.CamelCase` configuration should serialize the enum as a string
+- If the enum serializes as a number instead of string in JSON responses, add `JsonStringEnumConverter` to serialization options:
+  ```csharp
+  options.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+  ```
+- Verify that API responses show priority as string values (e.g., "high", "medium", "low") not numbers
 
 **What the AI tool should do**:
 - Replace the urgent query parameter logic with priority filtering
-- Ensure case-insensitive priority parsing
+- Use `Enum.TryParse<Priority>(value, ignoreCase: true, out var priority)` for case-insensitive parsing
+- Ensure the query parameter accepts any case variation of priority values
+- Verify JSON serialization outputs enum as string (may need to add JsonStringEnumConverter)
 
 ---
 
 ## Task 2: Python Scripts & Migration (8-9 minutes)
 
-### Subtask 2a: Update Seed Script (2-3 min)
-**File**: `LunchAndLearn/seed_database.py` (modify)
+### Subtask 2a: Transform CSV Data (2-3 min)
+**File**: `LunchAndLearn/issues.csv` (modify)
 
 **Changes needed**:
-- Update INSERT statement to use `Priority` column instead of `IsUrgent`
-- Use priority values (0=Low, 1=Medium, 2=High) in seed data
-- Mix of priorities: ISSUE-001→Medium, ISSUE-002→High, ISSUE-003→Low, etc.
+- Update the CSV file to replace `IsUrgent` column with `Priority` column
+- Transform boolean values (0/1) to priority levels (LOW/MEDIUM/HIGH)
+- Map: 0 (non-urgent) → LOW or MEDIUM, 1 (urgent) → HIGH or MEDIUM (mix it up)
+- Updated CSV example:
+  ```
+  Code,ShortDescription,LongDescription,Priority
+  ISSUE-001,Login button not working,Users report...,MEDIUM
+  ISSUE-002,Performance lag,App slows down...,HIGH
+  ISSUE-003,UI misalignment,Elements are...,LOW
+  ISSUE-004,Security vulnerability,Potential SQL...,HIGH
+  ISSUE-005,Feature request: Dark mode,Users want...,LOW
+  ```
 
 **What the AI tool should do**:
-- Replace IsUrgent with Priority in seed data
-- Ensure proper integer values for each priority level
+- Update the CSV headers (IsUrgent → Priority)
+- Transform each row's boolean value to appropriate priority level
+- Show practical data file manipulation (not just code changes)
+
+**Presenter Note**: "Notice how the AI tool can handle data file transformations, not just code. This is practical for teams working with CSVs and data imports."
 
 ---
 
@@ -78,33 +115,45 @@ public enum Priority
 **File**: `LunchAndLearn/migrate_to_priority.py` (NEW)
 
 **Must-haves**:
-- Convert existing `IsUrgent` boolean to Priority enum
-- Create automatic backup with timestamp
+- Read from the updated CSV file to populate the database with Priority values
+- Create automatic backup of the original CSV with timestamp
+- Create automatic backup of the database before migration
 - Provide rollback functionality with `--rollback` flag
 - Report conversion statistics (how many of each priority level)
 - Handle both fresh and partially-migrated databases
 
 **What the AI tool should do**:
-- Create comprehensive migration with error handling
-- Include backup/restore logic
+- Create comprehensive migration script that reads CSV and inserts into database
+- Include backup/restore logic for both CSV and database
 - Add command-line argument parsing
-- Provide clear user feedback
+- Provide clear user feedback on migration progress
 
 ---
 
-### Subtask 2c: Update Python Client (2-3 min)
-**File**: `LunchAndLearn/client.py` (modify)
+### Subtask 2c: Update Seed Script & Client (2-3 min)
+**Files**: 
+- `LunchAndLearn/seed_database.py` (modify)
+- `LunchAndLearn/client.py` (modify)
 
 **Changes needed**:
+
+**seed_database.py**:
+- Update to read Priority values from `issues.csv` instead of hardcoded data
+- Use csv module to read and parse the file
+- Insert CSV data directly into the database
+- Provide feedback on how many issues were loaded from CSV
+
+**client.py**:
 - Replace `--urgent` / `--no-urgent` flags with `--priority low|medium|high`
 - Update `get_issues()` method to accept priority parameter
 - Update table format to show Priority instead of Urgent
 - Add emoji indicators in simple format (🔴=High, 🟡=Medium, 🟢=Low)
 
 **What the AI tool should do**:
-- Update argument parsing
+- Update seed script to read CSV file using Python's csv module
+- Update argument parsing in client.py
 - Modify API call parameters
-- Enhance output formatting with priority levels
+- Enhance output formatting with priority levels and emojis
 
 ---
 
