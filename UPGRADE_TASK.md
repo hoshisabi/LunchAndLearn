@@ -1,15 +1,13 @@
-# Priority Feature Upgrade
+# Priority Feature Upgrade Tasks
 
 ## Overview
 Enhance the issue tracking system to support a three-level priority system (HIGH, MEDIUM, LOW) instead of a simple boolean `IsUrgent` flag.
 
-**Estimated time: 25-40 minutes** (5-8 minutes per AI tool)
-
 ---
 
-## Implementation Steps
+## Task 1: Data Model & API Endpoint (10 minutes)
 
-### Step 1: Create Priority Enum (2-3 min)
+### Subtask 1a: Create Priority Enum (2-3 min)
 **File**: `LunchAndLearn/Priority.cs` (NEW)
 
 Create a priority enum with three values:
@@ -29,7 +27,7 @@ public enum Priority
 
 ---
 
-### Step 2: Update C# Models (3-4 min)
+### Subtask 1b: Update C# Models (3-4 min)
 **Files**: 
 - `LunchAndLearn/Issue.cs` (modify)
 - `LunchAndLearn/IssueDbContext.cs` (modify)
@@ -47,7 +45,7 @@ public enum Priority
 
 ---
 
-### Step 3: Update API Endpoint (2-3 min)
+### Subtask 1c: Update API Endpoint (2-3 min)
 **File**: `LunchAndLearn/Program.cs` (modify)
 
 **Changes needed**:
@@ -60,7 +58,9 @@ public enum Priority
 
 ---
 
-### Step 4: Update Seed Script (2-3 min)
+## Task 2: Python Scripts & Migration (8-9 minutes)
+
+### Subtask 2a: Update Seed Script (2-3 min)
 **File**: `LunchAndLearn/seed_database.py` (modify)
 
 **Changes needed**:
@@ -74,7 +74,7 @@ public enum Priority
 
 ---
 
-### Step 5: Create Migration Script (3-4 min)
+### Subtask 2b: Create Migration Script (3-4 min)
 **File**: `LunchAndLearn/migrate_to_priority.py` (NEW)
 
 **Must-haves**:
@@ -92,7 +92,7 @@ public enum Priority
 
 ---
 
-### Step 6: Update Python Client (3-4 min)
+### Subtask 2c: Update Python Client (2-3 min)
 **File**: `LunchAndLearn/client.py` (modify)
 
 **Changes needed**:
@@ -108,7 +108,7 @@ public enum Priority
 
 ---
 
-### Step 7: Update Unit Tests (4-5 min)
+## Task 3: Unit Tests (8-9 minutes)
 **Files**:
 - `LunchAndLearn.Tests/IssueTests.cs` (modify)
 - `LunchAndLearn.Tests/IssueDbContextTests.cs` (modify)
@@ -134,31 +134,50 @@ public enum Priority
 
 ---
 
-### Step 8: Update README (2-3 min)
-**File**: `README.md` (modify)
+## Task 4: Documentation (5-6 minutes)
+**File**: `README.md` (modify - focus on Testing section)
 
 **Changes needed**:
-1. Update description to mention priority levels instead of urgency
-2. Update API examples:
-   - Old: `--urgent`, `--no-urgent`
-   - New: `--priority high|medium|low`
-3. Update curl examples with priority parameter
-4. Add "Priority System" section explaining:
-   - Three levels: Low, Medium, High
-   - Database migration instructions
-5. Update project structure to list new files
-6. Update test count from 7 to 8
+1. Update test examples to show priority filtering (not urgent filtering)
+2. Update expected test count from 7 to 8
+3. Update sample API calls with `?priority=` instead of `?urgent=`
+4. Update Python client examples with `--priority` flag
 
 **What the AI tool should do**:
-- Find and replace all references to IsUrgent/urgent with Priority
-- Ensure examples are clear and up-to-date
-- Add migration guide section
+- Update testing section of README
+- Ensure examples show new priority syntax
+- Keep it concise and focused on testing
 
 ---
 
-## Verification Steps (Before & After Demo)
+## Verification After Each Task
 
-### Before presenting:
+### After Task 1 (Data Model & API):
+```bash
+dotnet build
+# Should compile successfully
+```
+
+### After Task 2 (Python Scripts):
+```bash
+# No verification needed - Python scripts are reviewed manually
+```
+
+### After Task 3 (Unit Tests):
+```bash
+dotnet test
+# Expected: 8/8 tests passed
+```
+
+### After Task 4 (Documentation):
+```bash
+# No verification needed - documentation review only
+```
+
+---
+
+## Final Verification (All Tasks Complete)
+
 ```bash
 # Clean build
 dotnet clean
@@ -172,50 +191,13 @@ dotnet test
 dotnet build -c Release
 ```
 
-### During demo (optional quick check):
-```bash
-# Verify it compiles
-dotnet build
-
-# Verify tests pass
-dotnet test --verbosity quiet
-```
-
----
-
-## Demo Tips for Smooth Execution
-
-1. **Pre-demo setup**:
-   - Start from clean main branch
-   - Have the requirements visible (this file)
-   - Open the project in your chosen AI IDE
-
-2. **Per-tool workflow (5-8 min each)**:
-   - Read the step description
-   - Explain what needs to change
-   - Let the AI tool generate/modify the code
-   - Review for correctness
-   - Run `dotnet build` and `dotnet test` to verify
-
-3. **Expected outputs**:
-   - Each step should compile without errors
-   - Final result: All 8 tests passing
-   - Release build succeeds
-
-4. **If something breaks**:
-   - `git checkout -- .` to reset
-   - Review the error with the AI tool
-   - Fix and retry
-   - This actually demonstrates the debugging workflow!
-
 ---
 
 ## Key Success Criteria
 
-✅ All 8 unit tests pass
-✅ Release build succeeds  
-✅ No compilation errors
-✅ API correctly filters by priority
-✅ Client tool shows priority with new flags
-✅ Migration script handles database conversion
-✅ README is updated with new examples
+✅ All 8 unit tests pass (up from 7)
+✅ Release build succeeds with no errors
+✅ API correctly filters by `?priority=low|medium|high`
+✅ Python client accepts `--priority` flag
+✅ Migration script handles database conversion with backup
+✅ Code compiles at each task completion
