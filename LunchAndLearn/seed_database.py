@@ -2,6 +2,11 @@
 """
 Database seeding script for LunchAndLearn application.
 Seeds the SQLite database with initial issue data.
+
+Priority levels:
+  0 = Low
+  1 = Medium
+  2 = High
 """
 
 import sqlite3
@@ -41,22 +46,22 @@ def seed_database(db_path: str = "issues.db"):
             conn.close()
             return True
         
-        # Seed data
+        # Seed data with Priority values (0=Low, 1=Medium, 2=High)
         issues = [
             ("ISSUE-001", "Login button not working", 
-             "Users report that the login button is unresponsive on mobile devices.", 0),
+             "Users report that the login button is unresponsive on mobile devices.", 1),  # Medium
             ("ISSUE-002", "Performance lag", 
-             "App slows down after extended use, possibly due to memory leak.", 1),
+             "App slows down after extended use, possibly due to memory leak.", 2),  # High
             ("ISSUE-003", "UI misalignment", 
-             "Elements are misaligned on high-resolution screens.", 0),
+             "Elements are misaligned on high-resolution screens.", 0),  # Low
             ("ISSUE-004", "Security vulnerability", 
-             "Potential SQL injection in search query.", 1),
+             "Potential SQL injection in search query.", 2),  # High
             ("ISSUE-005", "Feature request: Dark mode", 
-             "Users want a dark mode toggle.", 0),
+             "Users want a dark mode toggle.", 0),  # Low
         ]
         
         cursor.executemany(
-            "INSERT INTO Issues (Code, ShortDescription, LongDescription, IsUrgent) VALUES (?, ?, ?, ?)",
+            "INSERT INTO Issues (Code, ShortDescription, LongDescription, Priority) VALUES (?, ?, ?, ?)",
             issues
         )
         

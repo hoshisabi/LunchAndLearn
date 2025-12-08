@@ -40,12 +40,12 @@ app.MapGet("/issues", async (IssueDbContext dbContext, HttpContext httpContext) 
 {
     var query = dbContext.Issues.AsQueryable();
     
-    // Check for urgent filter in query string
-    if (httpContext.Request.Query.TryGetValue("urgent", out var urgentValue))
+    // Check for priority filter in query string (low, medium, high)
+    if (httpContext.Request.Query.TryGetValue("priority", out var priorityValue))
     {
-        if (bool.TryParse(urgentValue.ToString(), out var urgent))
+        if (Enum.TryParse<Priority>(priorityValue.ToString(), ignoreCase: true, out var priority))
         {
-            query = query.Where(i => i.IsUrgent == urgent);
+            query = query.Where(i => i.Priority == priority);
         }
     }
     

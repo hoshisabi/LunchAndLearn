@@ -16,7 +16,10 @@ public class IssueDbContext : DbContext
             entity.Property(i => i.Code).IsRequired().HasMaxLength(50);
             entity.Property(i => i.ShortDescription).IsRequired().HasMaxLength(200);
             entity.Property(i => i.LongDescription).IsRequired();
-            entity.Property(i => i.IsUrgent).IsRequired();
+            entity.Property(i => i.Priority)
+                .IsRequired()
+                .HasConversion<int>()  // Store enum as integer in database
+                .HasDefaultValue(Priority.Medium);
         });
     }
 }
