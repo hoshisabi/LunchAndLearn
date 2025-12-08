@@ -5,6 +5,8 @@ description = "Python tools for LunchAndLearn application (seeding and API clien
 requires-python = ">=3.8"
 dependencies = [
     "requests>=2.31.0",
+    # Note: sqlite3 is a built-in Python module (standard library)
+    # and does not need to be listed as a dependency
 ]
 
 [project.optional-dependencies]

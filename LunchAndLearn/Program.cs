@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using LunchAndLearn;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +7,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+// Configure JSON serialization to use camelCase for API responses
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+});
 
 // Add DbContext for SQLite
 builder.Services.AddDbContext<IssueDbContext>(options =>
