@@ -13,7 +13,7 @@ This guide maps each AI tool to a specific task for the Priority Feature Upgrade
 
 ### Prerequisites
 1. Reset to clean `main` branch
-   ```bash
+   ```pwsh
    git checkout main
    git reset --hard origin/main
    git pull origin main
@@ -28,6 +28,29 @@ This guide maps each AI tool to a specific task for the Priority Feature Upgrade
 3. Have this repository open in each tool
 
 4. Keep `UPGRADE_TASK.md` visible for reference
+
+---
+
+## Planning with AI: A Practical Example
+
+An important part of the usage of AI tools is to generate your list of requirements before you begin. Many of the tools
+are more than happy start improvising details that you don't specify, so it's often helpful to come up with a checklist
+like this file to help keep track of the task. In addition, the tools can help you brainstorm this very checklist. For
+this, I took a very rough list of steps:
+
+> - Our users have expressed that they need to have finer grained control over the priority of tasks, instead of just
+    urgent as a boolean, we should have a priority field with three values right now. HIGH, MEDIUM, and LOW, with
+    HIGH > MEDIUM > LOW.
+> - We should have a small python migration script that can update an existing DB to use these new values.
+> - We should update our seed script to use this new value.
+> - We should update our server to take priority as a parameter.
+> - We should update our client.py to use this as a parameter.
+
+I then had Copilot help me model it into the UPGRADE_TASK.md file to help plan out the work that the tools will be doing.
+One of the most valuable uses of AI code generation tools is **planning and specification before coding**. Here's how
+we used Copilot/Gemini in a browser to plan this demo:
+
+> **💡 Presenter Note:** Mention this planning phase during intro/Q&A (~1-2 min). Don't interrupt the flow of tasks, but highlight how the rough requirements became the structured UPGRADE_TASK.md. This reinforces the meta-lesson: *Use AI not just to code, but to organize and plan.*
 
 ---
 
