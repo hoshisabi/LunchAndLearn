@@ -40,17 +40,22 @@ app.MapGet("/issues", async (IssueDbContext dbContext, HttpContext httpContext) 
 {
     var query = dbContext.Issues.AsQueryable();
     
-    // Check for urgent filter in query string
-    if (httpContext.Request.Query.TryGetValue("urgent", out var urgentValue))
+    // Check for priority filter in query string
+    if (httpContext.Request.Query.TryGetValue("priority", out var priorityValue))
     {
-        if (bool.TryParse(urgentValue.ToString(), out var urgent))
+        var priorityStr = priorityValue.ToString();
+        // Try case-insensitive parsing
+        if (Enum.TryParse<Priority>(priorityStr, ignoreCase: true, out var priority))
         {
-            query = query.Where(i => i.IsUrgent == urgent);
+            query = query.Where(i => i.Priority == priority);
         }
     }
     
+    // Order by priority: HIGH > MEDIUM > LOW
+    query = query.OrderByDescending(i => i.Priority);
+    
     return await query.ToListAsync();
 })
-.WithName("GetIssues");  // Updated name for clarity
+.WithName("GetIssues");
 
 app.Run();
