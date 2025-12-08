@@ -292,12 +292,58 @@ This project is designed to demonstrate various AI-powered code assistance tools
 - **Features:** Code completion, refactoring suggestions, documentation generation
 - **Note:** Requires a JetBrains subscription with AI features enabled
 
+### GitHub Copilot CLI
+- **What it is:** Command-line interface for GitHub Copilot
+- **Where to get it:** https://github.com/github/gh-copilot
+- **Platforms:** Windows, macOS, Linux (via GitHub CLI)
+- **Features:** AI assistance at the command line for code explanation, refactoring, and documentation
+- **Prerequisites:** GitHub CLI installed (`gh`)
+
+**Installation & Setup:**
+```bash
+# 1. Install GitHub CLI if you don't have it
+# Windows (using Chocolatey):
+choco install gh
+
+# Or download from: https://github.com/cli/cli/releases
+
+# 2. Authenticate with GitHub
+gh auth login
+# Follow the prompts to authenticate with your GitHub account
+
+# 3. Install Copilot extension for gh
+gh extension install github/gh-copilot
+
+# 4. Test installation
+gh copilot --version
+```
+
+**Basic Usage:**
+```bash
+# Ask Copilot a question about code
+gh copilot explain "what does this code do?"
+
+# Get suggestions for a task
+gh copilot suggest "update markdown file with new section"
+
+# Review code changes
+gh copilot explain < somefile.cs
+```
+
+**Note for University/Enterprise Settings:**
+If your institution uses GitHub Enterprise with GitHub Copilot, you may be able to use your university/enterprise account instead of a personal GitHub account.
+
+---
+
 ### Google Gemini CLI
 - **What it is:** Command-line interface for Google's Gemini AI model
 - **Where to get it:** https://github.com/google/generative-ai-cli
 - **Platforms:** Windows, macOS, Linux
 - **Features:** Code generation, analysis, and assistance via command line
 - **Installation:** `npm install -g @google/generative-ai-cli` or via other package managers
+- **Note:** Requires personal Google account with Gemini API access
+
+---
 
 ### Other Tools
 - **ChatGPT** (via web interface or API)
