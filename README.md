@@ -302,8 +302,8 @@ This project is designed to demonstrate various AI-powered code assistance tools
 **Installation & Setup:**
 ```bash
 # 1. Install GitHub CLI if you don't have it
-# Windows (using Chocolatey):
-choco install gh
+# Windows (using Winget):
+winget install GitHub.Copilot
 
 # Or download from: https://github.com/cli/cli/releases
 
