@@ -6,3 +6,5 @@ riderModule.iml
 .idea/
 .venv/
 *.db
+*.db-shm
+*.db-wal

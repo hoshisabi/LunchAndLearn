@@ -93,12 +93,16 @@ public class IssueDbContextTests : IDisposable
         var issue1 = new Issue("ISSUE-001", "Test", "Test", false);
         _context.Issues.Add(issue1);
         await _context.SaveChangesAsync();
+        
+        // Detach the first issue so we can test the primary key constraint
+        _context.Entry(issue1).State = EntityState.Detached;
 
         // Act & Assert - Try to add duplicate code should fail
+        // Note: InMemory database throws ArgumentException, not DbUpdateException
         var issue2 = new Issue("ISSUE-001", "Duplicate", "Duplicate", true);
         _context.Issues.Add(issue2);
         
-        await Assert.ThrowsAsync<DbUpdateException>(async () => 
+        await Assert.ThrowsAsync<ArgumentException>(async () => 
             await _context.SaveChangesAsync());
     }
 
