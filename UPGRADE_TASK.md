@@ -191,10 +191,11 @@ Accept: application/json
 
 ---
 
-## Task 3: Unit Tests (8-9 minutes)
+## Task 3: Unit Tests (10-11 minutes)
 **Files**:
 - `LunchAndLearn.Tests/IssueTests.cs` (modify)
 - `LunchAndLearn.Tests/IssueDbContextTests.cs` (modify)
+- `LunchAndLearn/test_client.py` (NEW - Python unit tests)
 
 **Changes needed**:
 1. `IssueTests.cs`:
@@ -208,12 +209,22 @@ Accept: application/json
    - Test filtering by each priority level (High, Medium, Low)
    - Update primary key tests to use Priority values
 
-**Expected result**: 8 passing tests (up from 7)
+3. `test_client.py` (Python unit tests):
+   - Test `LunchAndLearnClient.get_issues()` with different urgent filters
+   - Test `print_issues()` with different formats (table, json, simple)
+   - Use mocking to avoid requiring a running server
+   - Verify urgent filtering logic works correctly
+
+**Expected result**: 
+- 8 passing C# tests (up from 7)
+- 3-4 passing Python tests
 
 **What the AI tool should do**:
-- Refactor all test cases to use Priority enum
-- Ensure comprehensive coverage of all three priority levels
-- Verify tests pass with `dotnet test`
+- Refactor all C# test cases to use Priority enum
+- Create Python unit tests using pytest with mocking
+- Ensure comprehensive coverage of all three priority levels in C# tests
+- Test Python client functionality without requiring running server
+- Verify all tests pass with `dotnet test` and `pytest`
 
 ---
 
@@ -249,7 +260,10 @@ dotnet build
 ### After Task 3 (Unit Tests):
 ```bash
 dotnet test
-# Expected: 8/8 tests passed
+# Expected: 8/8 C# tests passed
+
+pytest LunchAndLearn/test_client.py
+# Expected: 7/7 Python tests passed
 ```
 
 ### After Task 4 (Documentation):
@@ -267,7 +281,10 @@ dotnet build
 
 # All tests pass
 dotnet test
-# Expected: 8/8 tests passed
+# Expected: 8/8 C# tests passed
+
+pytest LunchAndLearn/test_client.py
+# Expected: 7/7 Python tests passed
 
 # Release build succeeds
 dotnet build -c Release
@@ -283,7 +300,8 @@ dotnet build -c Release
 
 ## Key Success Criteria
 
-✅ All 8 unit tests pass (up from 7)
+✅ All 8 C# unit tests pass (up from 7)
+✅ All 7 Python unit tests pass
 ✅ Release build succeeds with no errors
 ✅ API correctly filters by `?priority=low|medium|high`
 ✅ Python client accepts `--priority` flag
