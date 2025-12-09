@@ -1,9 +1,11 @@
 ﻿# Lunch & Learn Demo Guide
 
 ## Overview
+
 This guide maps each AI tool to a specific task for the Priority Feature Upgrade demo.
 
 **Total Demo Time**: 50 minutes
+
 - **Implementation**: ~32-34 minutes (4 tasks)
 - **Q&A**: ~16-18 minutes
 
@@ -12,13 +14,14 @@ This guide maps each AI tool to a specific task for the Priority Feature Upgrade
 ## Demo Setup (Before You Start)
 
 ### Prerequisites
-1. Reset to clean `main` branch
+
+1. Create a fresh demo branch from `main`
    ```pwsh
    git checkout main
-   git reset --hard origin/main
    git pull origin main
+   git checkout -b demo/priority-feature
    ```
-
+   
 2. Have these tools ready:
     - **Cursor IDE** - for Task 1
     - **VS Code with GitHub Copilot** - for Task 2
@@ -46,30 +49,37 @@ this, I took a very rough list of steps:
 > - We should update our server to take priority as a parameter.
 > - We should update our client.py to use this as a parameter.
 
-I then had Copilot help me model it into the UPGRADE_TASK.md file to help plan out the work that the tools will be doing.
+I then had Copilot help me model it into the UPGRADE_TASK.md file to help plan out the work that the tools will be
+doing.
 One of the most valuable uses of AI code generation tools is **planning and specification before coding**. Here's how
 we used Copilot/Gemini in a browser to plan this demo:
 
-> **💡 Presenter Note:** Mention this planning phase during intro/Q&A (~1-2 min). Don't interrupt the flow of tasks, but highlight how the rough requirements became the structured UPGRADE_TASK.md. This reinforces the meta-lesson: *Use AI not just to code, but to organize and plan.*
+> **💡 Presenter Note:** Mention this planning phase during intro/Q&A (~1-2 min). Don't interrupt the flow of tasks, but
+> highlight how the rough requirements became the structured UPGRADE_TASK.md. This reinforces the meta-lesson: *Use AI
+not just to code, but to organize and plan.*
 
 ---
 
 ## Task Assignments
 
 ### Task 1: Data Model & API Endpoint (10 min) - **CURSOR**
+
 **What Cursor will demonstrate:**
+
 - Creating new files from scratch
 - Understanding existing codebase structure
 - Making changes across multiple related files
 - Refactoring with full codebase context
 
 **Steps** (from UPGRADE_TASK.md, Task 1):
+
 1. Create `Priority.cs` enum
 2. Update `Issue.cs` model
 3. Update `IssueDbContext.cs` configuration
 4. Update `Program.cs` API endpoint
 
 **Your role:**
+
 - Explain the task: "We need to replace the boolean urgent flag with a three-level priority system"
 - Let Cursor work through all subtasks
 - After completion: Run `dotnet build` to verify compilation
@@ -88,6 +98,7 @@ we used Copilot/Gemini in a browser to plan this demo:
 - **File location**: Create `Priority.cs` in `LunchAndLearn/` directory (same location as `Issue.cs`)
 
 **Expected time breakdown:**
+
 - Subtask 1a (Priority.cs): 2-3 min
 - Subtask 1b (Issue.cs + IssueDbContext.cs): 3-4 min
 - Subtask 1c (Program.cs): 2-3 min
@@ -96,7 +107,9 @@ we used Copilot/Gemini in a browser to plan this demo:
 ---
 
 ### Task 2: Python Scripts & Migration (8-9 min) - **COPILOT CLI**
+
 **What Copilot CLI will demonstrate:**
+
 - Iterative refinement through conversation (not just single-shot generation)
 - How AI assistance works outside the IDE (accessibility for CLI-first developers)
 - Data file transformation workflows (CSV manipulation is practical, real-world work)
@@ -104,12 +117,14 @@ we used Copilot/Gemini in a browser to plan this demo:
 - Multi-step problem solving with back-and-forth discussion
 
 **Steps** (iterative conversation approach):
+
 1. Transform the CSV data file (IsUrgent → Priority columns)
 2. Generate migration script that reads from updated CSV
 3. Refine with backup/rollback feature through follow-up requests
 4. Update seed script and client to work with new data structure
 
 **Your role:**
+
 - Explain: "Not everyone works in an IDE. Copilot CLI brings AI assistance to the terminal—and the workflow is just as powerful. Watch how we refine the migration script through conversation."
 - **Key point**: "Notice we're also working with CSV files—data transformation is just as important as code generation. Many of you work with CSVs daily."
 - Show the conversational back-and-forth: each request builds on the previous one
@@ -133,6 +148,7 @@ gh copilot suggest "Add a --rollback flag to restore from backups and improve er
 ```
 
 **Expected time breakdown:**
+
 - CSV transformation + migration generation: 3-4 min
 - Backup/rollback refinement: 2-3 min
 - Review and seed script updates: 2-3 min
@@ -142,23 +158,28 @@ gh copilot suggest "Add a --rollback flag to restore from backups and improve er
 ---
 
 ### Task 3: Unit Tests (8-9 min) - **JUNIE (JetBrains Rider)**
+
 **What Junie will demonstrate:**
+
 - IDE integration and refactoring capabilities
 - Test-driven development practices
 - Comprehensive test coverage
 - Different IDE experience than VS Code
 
 **Steps** (from UPGRADE_TASK.md, Task 3):
+
 1. Update `IssueTests.cs` - Create tests for all three priority levels
 2. Update `IssueDbContextTests.cs` - Refactor filtering tests for priority
 
 **Your role:**
+
 - Explain: "Let's ensure our changes are properly tested with comprehensive test coverage"
 - Show Junie's test navigation and refactoring UI (different from Copilot in VS Code)
 - After completion: Run `dotnet test` to show all 8 tests passing (up from 7)
 - Highlight the test coverage verification
 
 **Expected time breakdown:**
+
 - IssueTests.cs refactoring: 3-4 min
 - IssueDbContextTests.cs refactoring: 3-4 min
 - Test execution & verification: 1-2 min
@@ -166,13 +187,16 @@ gh copilot suggest "Add a --rollback flag to restore from backups and improve er
 ---
 
 ### Task 4: Documentation (5-6 min) - **COPILOT (VS Code)**
+
 **What Copilot will demonstrate:**
+
 - Context-aware documentation updates (AI understands code changes from Tasks 1-3)
 - Keeping code and documentation in sync automatically
 - Inline editing with immediate codebase context
 - How AI catches inconsistencies without being explicitly told
 
 **Steps** (from UPGRADE_TASK.md, Task 4):
+
 1. Open README.md alongside recent code changes
 2. Use Copilot to update testing section
      - Fix test count reference (7 → 8)
@@ -180,6 +204,7 @@ gh copilot suggest "Add a --rollback flag to restore from backups and improve er
      - Update Python client examples
 
 **Your role:**
+
 - Explain: "Finally, documentation. The interesting thing about using Copilot here is that it has immediate context about the code changes we just made. It's not guessing—it understands what changed."
 - Show how Copilot infers the test count change from the actual code
 - Highlight: "Watch how it catches inconsistencies without us explicitly pointing them out"
@@ -187,6 +212,7 @@ gh copilot suggest "Add a --rollback flag to restore from backups and improve er
 - Emphasize: "This is about keeping code and documentation in sync, which is a real problem teams face"
 
 **Expected time breakdown:**
+
 - README updates with context-aware refinement: 5-6 min
 
 **No verification needed** (documentation review only)
@@ -196,67 +222,58 @@ gh copilot suggest "Add a --rollback flag to restore from backups and improve er
 ## Talking Points for Each Tool
 
 ### Cursor
-> "Cursor understands your *entire codebase context* without you having to explain it. Watch how it automatically identified that changing `Issue.cs` requires coordinated updates to `IssueDbContext.cs` and `Program.cs`. It didn't need you to say 'remember the database context' or 'don't forget the API endpoint'—it just *knew*. This kind of deep codebase understanding saves enormous amounts of cognitive load."
 
-**Key demonstration focus:**
-- Show the multi-file diff after completion
-- Point out that no manual context-switching was needed
-- Emphasize: "We didn't have to manage complexity—Cursor did"
-
-### Copilot CLI
-> "Not everyone works in an IDE. For those of you who live in the terminal—whether you're DevOps engineers, system administrators, or just prefer CLI workflows—Copilot CLI brings AI assistance directly to the command line. But notice something important: we're not just writing code. We're transforming data files too. Watch how we refine the migration script through conversation: 'Transform this CSV,' 'Now add backup functionality,' 'Make it handle rollbacks.' Each iteration improves the output without starting from scratch. This is how you use AI for practical work—whether it's code, scripts, or data transformations."
-
-**Key demonstration focus:**
-- Show the conversational back-and-forth in the CLI
-- **Highlight CSV transformation as equally important to code generation**
-- Demonstrate how each `gh copilot` call refines or extends the previous work
-- Emphasize: "This is how you use AI if you're not in an IDE—and the workflow is just as powerful for data work as it is for code"
-
-### Junie (JetBrains Rider)
-> "JetBrains AI is deeply integrated into the IDE. Notice how Junie understands Rider's test UI, and you can run tests directly from the gutter icons. But more importantly, watch how it suggests not just test code, but *test structure* that plays to Rider's strengths—it knows about parameterized tests, knows about Rider's coverage highlighting, and suggests tests in a way that will show up nicely in the test tree. This is IDE-specific value that you don't get in isolation."
-
-**Key demonstration focus:**
-- Show Junie generating tests that run immediately via Rider's test runner
-- Point out the test tree navigation in the IDE
-- Run tests from the IDE UI (not terminal)
-- Highlight: "Tests written in a way that fit *this IDE's workflow*"
+> "Cursor excels at understanding your entire codebase. Notice how it immediately understood the relationships between
+> the Issue model, the database context, and the API endpoint. It modified all three files in a coordinated way, showing
+> deep codebase comprehension."
 
 ### Copilot (VS Code)
-> "Finally, documentation. Copilot in VS Code is particularly good at editing existing documentation because it has immediate context about the code changes we just made. Watch how it updates the README not by guessing, but by understanding the actual changes we made in Tasks 1-3. It also catches inconsistencies—like the test count going from 7 to 8—without you explicitly pointing it out. This is about keeping code and documentation in sync, which is a real problem teams face."
 
-**Key demonstration focus:**
-- Open README alongside the code changes
-- Ask Copilot to update the testing section
-- Point out how it infers the test count change from the actual code
-- Emphasize: "No manual consistency checking—the AI understands what changed"
+> "GitHub Copilot shows its versatility here, seamlessly switching between C# and Python. The migration script is
+> particularly complex with error handling and backup logic—notice how Copilot created production-ready code with proper
+> safety features."
+
+### Junie (JetBrains Rider)
+
+> "JetBrains AI Assistant is deeply integrated with Rider's refactoring capabilities. The IDE-integrated experience
+> offers real-time suggestions and coordinated refactoring across test files. Also notice how running tests directly
+> from the IDE gives immediate feedback."
+
+### Copilot CLI / Gemini
+
+> "AI isn't just for code. Here we used it for technical documentation to ensure consistency and clarity. This
+> demonstrates how modern AI can improve the entire development experience, not just code generation."
 
 ---
 
 ## Timing & Pacing Tips
 
-| Time | Task | Duration |
-|------|------|----------|
-| 0:00-0:10 | Task 1 (Cursor) | 10 min |
+| Time      | Task                 | Duration |
+|-----------|----------------------|----------|
+| 0:00-0:10 | Task 1 (Cursor)      | 10 min   |
 | 0:10-0:19 | Task 2 (Copilot CLI) | 8-9 min |
-| 0:19-0:28 | Task 3 (Junie) | 8-9 min |
+| 0:19-0:28 | Task 3 (Junie)       | 8-9 min  |
 | 0:28-0:34 | Task 4 (Copilot) | 5-6 min |
-| 0:34-0:50 | Q&A | 16 min |
+| 0:34-0:50 | Q&A                  | 16 min   |
 
 ---
 
 ## What If Something Goes Wrong?
 
 ### If a tool makes a mistake:
+
 1. **Acknowledge it**: "Interesting—the tool suggested this, but we need..."
 2. **Show the debugging process**: Use the AI tool to explain and fix the error
 3. **Turn it into a teaching moment**: "This shows why we have testing and code review!"
 
 ### If you're running behind:
+
 1. Skip detailed explanations in Tasks 2-4
 2. Focus on showing the *result* rather than full generation
 3. Use Task 4 (Docs) as a "buffer task"—it's the easiest to compress
 
 ### If you're ahead of schedule:
+
 1. Spend extra time on Q&A
 2. Show additional features of each tool
 3. Do a deeper dive into the test coverage
@@ -267,7 +284,8 @@ gh copilot suggest "Add a --rollback flag to restore from backups and improve er
 
 1. **Show the final result**: Run full test suite and release build
 2. **Discuss the journey**: Point back to the 4 different tools and what each brought
-3. **Key takeaway**: "These tools freed you to focus on architecture and logic, while AI handled the implementation details"
+3. **Key takeaway**: "These tools freed you to focus on architecture and logic, while AI handled the implementation
+   details"
 
 ---
 
