@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Python tools for LunchAndLearn application (seeding and API client)"
 requires-python = ">=3.8"
 dependencies = [
+    "pytest>=8.3.5",
     "requests>=2.31.0",
     # Note: sqlite3 is a built-in Python module (standard library)
     # and does not need to be listed as a dependency
