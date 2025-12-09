@@ -3,45 +3,60 @@ namespace LunchAndLearn.Tests;
 public class IssueTests
 {
     [Fact]
-    public void Issue_CanBeCreated_WithAllProperties()
+    public void Issue_CanBeCreated_WithHighPriority()
     {
         // Arrange & Act
         var issue = new Issue(
             "ISSUE-001",
             "Test Description",
             "Long test description",
-            true
+            Priority.HIGH
         );
 
         // Assert
         Assert.Equal("ISSUE-001", issue.Code);
         Assert.Equal("Test Description", issue.ShortDescription);
         Assert.Equal("Long test description", issue.LongDescription);
-        Assert.True(issue.IsUrgent);
+        Assert.Equal(Priority.HIGH, issue.Priority);
     }
 
     [Fact]
-    public void Issue_CanBeCreated_AsNonUrgent()
+    public void Issue_CanBeCreated_WithMediumPriority()
     {
         // Arrange & Act
         var issue = new Issue(
             "ISSUE-002",
-            "Non-urgent issue",
-            "This is not urgent",
-            false
+            "Medium issue",
+            "This is medium priority",
+            Priority.MEDIUM
         );
 
         // Assert
-        Assert.False(issue.IsUrgent);
+        Assert.Equal(Priority.MEDIUM, issue.Priority);
+    }
+
+    [Fact]
+    public void Issue_CanBeCreated_WithLowPriority()
+    {
+        // Arrange & Act
+        var issue = new Issue(
+            "ISSUE-003",
+            "Low issue",
+            "This is low priority",
+            Priority.LOW
+        );
+
+        // Assert
+        Assert.Equal(Priority.LOW, issue.Priority);
     }
 
     [Fact]
     public void Issue_RecordEquality_WorksCorrectly()
     {
         // Arrange
-        var issue1 = new Issue("ISSUE-001", "Test", "Long", true);
-        var issue2 = new Issue("ISSUE-001", "Test", "Long", true);
-        var issue3 = new Issue("ISSUE-002", "Test", "Long", true);
+        var issue1 = new Issue("ISSUE-001", "Test", "Long", Priority.HIGH);
+        var issue2 = new Issue("ISSUE-001", "Test", "Long", Priority.HIGH);
+        var issue3 = new Issue("ISSUE-002", "Test", "Long", Priority.MEDIUM);
 
         // Assert
         Assert.Equal(issue1, issue2);
