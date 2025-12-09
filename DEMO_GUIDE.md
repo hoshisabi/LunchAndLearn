@@ -15,13 +15,13 @@ This guide maps each AI tool to a specific task for the Priority Feature Upgrade
 
 ### Prerequisites
 
-1. Create a fresh demo branch from `main`
+1. Reset to clean `main` branch
    ```pwsh
    git checkout main
+   git reset --hard origin/main
    git pull origin main
-   git checkout -b demo/priority-feature
    ```
-   
+
 2. Have these tools ready:
     - **Cursor IDE** - for Task 1
     - **VS Code with GitHub Copilot** - for Task 2
@@ -85,18 +85,6 @@ not just to code, but to organize and plan.*
 - After completion: Run `dotnet build` to verify compilation
 - Show the changes across files as evidence of codebase understanding
 
-**Key points to highlight during demo:**
-- Emphasize Cursor's codebase understanding: it automatically connected related files (Issue.cs → IssueDbContext.cs → Program.cs) without explicit instructions
-- Show the multi-file diff view to demonstrate coordinated changes across the entire codebase
-- Mention Plan mode as an example of planning before execution (aligns with the demo's planning philosophy)
-
-**Important hints for Cursor execution:**
-- **Priority enum**: Use uppercase `LOW`, `MEDIUM`, `HIGH` (no explicit numeric values - C# will auto-assign 0, 1, 2)
-- **Database storage**: Use `.HasConversion<string>()` in `IssueDbContext.cs` to store enum as string in SQLite (for Python script compatibility)
-- **Query parsing**: Use `Enum.TryParse<Priority>(value, ignoreCase: true, out var priority)` for case-insensitive input (accepts 'high', 'HIGH', 'High', etc.)
-- **JSON serialization**: Verify enum serializes as string in API responses (may need `JsonStringEnumConverter` if enum serializes as number instead of string)
-- **File location**: Create `Priority.cs` in `LunchAndLearn/` directory (same location as `Issue.cs`)
-
 **Expected time breakdown:**
 
 - Subtask 1a (Priority.cs): 2-3 min
@@ -106,54 +94,33 @@ not just to code, but to organize and plan.*
 
 ---
 
-### Task 2: Python Scripts & Migration (8-9 min) - **COPILOT CLI**
+### Task 2: Python Scripts & Migration (8-9 min) - **COPILOT (VS Code)**
 
-**What Copilot CLI will demonstrate:**
+**What Copilot will demonstrate:**
 
-- Iterative refinement through conversation (not just single-shot generation)
-- How AI assistance works outside the IDE (accessibility for CLI-first developers)
-- Data file transformation workflows (CSV manipulation is practical, real-world work)
-- Complex script development with progressive improvement
-- Multi-step problem solving with back-and-forth discussion
+- Language switching (C# → Python)
+- Creating complex scripts with error handling
+- Database operations and refactoring
+- Multi-file modifications across different language stacks
 
-**Steps** (iterative conversation approach):
+**Steps** (from UPGRADE_TASK.md, Task 2):
 
-1. Transform the CSV data file (IsUrgent → Priority columns)
-2. Generate migration script that reads from updated CSV
-3. Refine with backup/rollback feature through follow-up requests
-4. Update seed script and client to work with new data structure
+1. Update `seed_database.py`
+2. Create new `migrate_to_priority.py` with backup/rollback
+3. Update `client.py` with new priority filtering
 
 **Your role:**
 
-- Explain: "Not everyone works in an IDE. Copilot CLI brings AI assistance to the terminal—and the workflow is just as powerful. Watch how we refine the migration script through conversation."
-- **Key point**: "Notice we're also working with CSV files—data transformation is just as important as code generation. Many of you work with CSVs daily."
-- Show the conversational back-and-forth: each request builds on the previous one
-- Highlight: "We're not asking for one perfect script—we're iteratively improving it"
-- After completion: Review the final migration script's robustness and backup/rollback logic
-- Emphasize: "This is how CLI-first developers can use AI effectively, whether for code or data"
-
-**Key conversation sequence:**
-```bash
-# First, transform the CSV file
-gh copilot suggest "Update the issues.csv file to replace the IsUrgent boolean column with a Priority column, mapping 0->LOW/MEDIUM and 1->MEDIUM/HIGH"
-
-# Then generate migration script that reads CSV
-gh copilot suggest "Create a Python migration script that reads the updated issues.csv file and inserts the data into the database with Priority values"
-
-# Add backup functionality
-gh copilot suggest "Add backup functionality with timestamp to the migration script, backing up both the CSV and database"
-
-# Add rollback support
-gh copilot suggest "Add a --rollback flag to restore from backups and improve error messages"
-```
+- Explain: "Now we need to update the Python side to support the new priority system"
+- Highlight Copilot's ability to switch between C# and Python
+- After completion: Review the migration script and its robustness
+- No build verification needed (Python is interpreted)
 
 **Expected time breakdown:**
 
-- CSV transformation + migration generation: 3-4 min
-- Backup/rollback refinement: 2-3 min
-- Review and seed script updates: 2-3 min
-
-**No build verification needed** (Python is interpreted)
+- Subtask 2a (seed_database.py): 2-3 min
+- Subtask 2b (migrate_to_priority.py): 3-4 min
+- Subtask 2c (client.py): 2-3 min
 
 ---
 
@@ -186,36 +153,32 @@ gh copilot suggest "Add a --rollback flag to restore from backups and improve er
 
 ---
 
-### Task 4: Documentation (5-6 min) - **COPILOT (VS Code)**
+### Task 4: Documentation (5-6 min) - **COPILOT CLI** (or Gemini)
 
-**What Copilot will demonstrate:**
+**What Copilot CLI will demonstrate:**
 
-- Context-aware documentation updates (AI understands code changes from Tasks 1-3)
-- Keeping code and documentation in sync automatically
-- Inline editing with immediate codebase context
-- How AI catches inconsistencies without being explicitly told
+- AI assistance for non-code tasks (documentation)
+- Different interface/interaction model (CLI vs IDE)
+- Communication and clarity in technical writing
+- Real-world business use case (customer-facing docs)
 
 **Steps** (from UPGRADE_TASK.md, Task 4):
 
-1. Open README.md alongside recent code changes
-2. Use Copilot to update testing section
-     - Fix test count reference (7 → 8)
-     - Update example API calls (`?priority=` instead of `?urgent=`)
-     - Update Python client examples
+1. Update README.md testing section
+    - Fix test count reference (7 → 8)
+    - Update example API calls (`?priority=` instead of `?urgent=`)
+    - Update Python client examples
 
 **Your role:**
 
-- Explain: "Finally, documentation. The interesting thing about using Copilot here is that it has immediate context about the code changes we just made. It's not guessing—it understands what changed."
-- Show how Copilot infers the test count change from the actual code
-- Highlight: "Watch how it catches inconsistencies without us explicitly pointing them out"
+- Explain: "Finally, let's ensure our documentation reflects the new feature"
+- Show how AI can help with documentation accuracy, not just code
 - Review the updated README for clarity and correctness
-- Emphasize: "This is about keeping code and documentation in sync, which is a real problem teams face"
+- No verification needed (documentation review only)
 
 **Expected time breakdown:**
 
-- README updates with context-aware refinement: 5-6 min
-
-**No verification needed** (documentation review only)
+- README updates: 5-6 min
 
 ---
 
@@ -251,9 +214,9 @@ gh copilot suggest "Add a --rollback flag to restore from backups and improve er
 | Time      | Task                 | Duration |
 |-----------|----------------------|----------|
 | 0:00-0:10 | Task 1 (Cursor)      | 10 min   |
-| 0:10-0:19 | Task 2 (Copilot CLI) | 8-9 min |
+| 0:10-0:19 | Task 2 (Copilot)     | 8-9 min  |
 | 0:19-0:28 | Task 3 (Junie)       | 8-9 min  |
-| 0:28-0:34 | Task 4 (Copilot) | 5-6 min |
+| 0:28-0:34 | Task 4 (Copilot CLI) | 5-6 min  |
 | 0:34-0:50 | Q&A                  | 16 min   |
 
 ---

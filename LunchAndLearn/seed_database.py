@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 """
 Database seeding script for LunchAndLearn application.
-Seeds the SQLite database with initial issue data.
+Seeds the SQLite database with initial issue data from CSV file.
 """
 
 import sqlite3
+import csv
 import os
 import sys
 
 
 def seed_database(db_path: str = "issues.db"):
     """
-    Seeds the Issues table with initial data if the table is empty.
+    Seeds the Issues table with data from issues.csv if the table is empty.
     
     Args:
         db_path: Path to the SQLite database file
@@ -19,6 +20,11 @@ def seed_database(db_path: str = "issues.db"):
     # Check if database exists
     if not os.path.exists(db_path):
         print(f"Database file '{db_path}' not found. Please ensure the database is created first.")
+        return False
+    
+    csv_path = os.path.join(os.path.dirname(db_path), "issues.csv")
+    if not os.path.exists(csv_path):
+        print(f"CSV file '{csv_path}' not found.")
         return False
     
     try:
@@ -41,27 +47,25 @@ def seed_database(db_path: str = "issues.db"):
             conn.close()
             return True
         
-        # Seed data
-        issues = [
-            ("ISSUE-001", "Login button not working", 
-             "Users report that the login button is unresponsive on mobile devices.", 0),
-            ("ISSUE-002", "Performance lag", 
-             "App slows down after extended use, possibly due to memory leak.", 1),
-            ("ISSUE-003", "UI misalignment", 
-             "Elements are misaligned on high-resolution screens.", 0),
-            ("ISSUE-004", "Security vulnerability", 
-             "Potential SQL injection in search query.", 1),
-            ("ISSUE-005", "Feature request: Dark mode", 
-             "Users want a dark mode toggle.", 0),
-        ]
+        # Read from CSV file
+        issues = []
+        with open(csv_path, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                issues.append((
+                    row['Code'],
+                    row['ShortDescription'],
+                    row['LongDescription'],
+                    row['Priority']
+                ))
         
         cursor.executemany(
-            "INSERT INTO Issues (Code, ShortDescription, LongDescription, IsUrgent) VALUES (?, ?, ?, ?)",
+            "INSERT INTO Issues (Code, ShortDescription, LongDescription, Priority) VALUES (?, ?, ?, ?)",
             issues
         )
         
         conn.commit()
-        print(f"Successfully seeded {len(issues)} issues into the database.")
+        print(f"Successfully seeded {len(issues)} issues from CSV into the database.")
         conn.close()
         return True
         

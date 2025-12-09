@@ -4,12 +4,16 @@
 GET {{LunchAndLearn_HostAddress}}/issues
 Accept: application/json
 
-### Get only urgent issues
-GET {{LunchAndLearn_HostAddress}}/issues?urgent=true
+### Get only HIGH priority issues
+GET {{LunchAndLearn_HostAddress}}/issues?priority=high
 Accept: application/json
 
-### Get only non-urgent issues
-GET {{LunchAndLearn_HostAddress}}/issues?urgent=false
+### Get only MEDIUM priority issues
+GET {{LunchAndLearn_HostAddress}}/issues?priority=medium
+Accept: application/json
+
+### Get only LOW priority issues
+GET {{LunchAndLearn_HostAddress}}/issues?priority=low
 Accept: application/json
 
 ###

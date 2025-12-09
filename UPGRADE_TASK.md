@@ -5,7 +5,7 @@ Enhance the issue tracking system to support a three-level priority system (HIGH
 
 ---
 
-## Task 1: Data Model & API Endpoint (10 minutes)
+## Task 1: Data Model & API Endpoint (11 minutes)
 
 ### Subtask 1a: Create Priority Enum (2-3 min)
 **File**: `LunchAndLearn/Priority.cs` (NEW)
@@ -80,6 +80,40 @@ public enum Priority
 - Use `Enum.TryParse<Priority>(value, ignoreCase: true, out var priority)` for case-insensitive parsing
 - Ensure the query parameter accepts any case variation of priority values
 - Verify JSON serialization outputs enum as string (may need to add JsonStringEnumConverter)
+
+---
+
+### Subtask 1d: Update HTTP Test File (1 min)
+**File**: `LunchAndLearn/LunchAndLearn.http` (modify)
+
+**Changes needed**:
+- Update HTTP request examples to use `?priority=low|medium|high` instead of `?urgent=true|false`
+- Add requests for each priority level (HIGH, MEDIUM, LOW)
+- Keep the "Get all issues" request without a filter
+
+**Example updated requests**:
+```
+### Get all issues
+GET {{LunchAndLearn_HostAddress}}/issues
+Accept: application/json
+
+### Get only HIGH priority issues
+GET {{LunchAndLearn_HostAddress}}/issues?priority=high
+Accept: application/json
+
+### Get only MEDIUM priority issues
+GET {{LunchAndLearn_HostAddress}}/issues?priority=medium
+Accept: application/json
+
+### Get only LOW priority issues
+GET {{LunchAndLearn_HostAddress}}/issues?priority=low
+Accept: application/json
+```
+
+**What the AI tool should do**:
+- Replace any `?urgent=` query parameters with `?priority=` parameters
+- Add example requests for each priority level
+- Ensure requests use lowercase priority values (matching API behavior)
 
 ---
 
@@ -205,6 +239,13 @@ public enum Priority
 ```bash
 dotnet build
 # Should compile successfully
+
+# Optional: Test API endpoints using .http file
+# Run the requests in LunchAndLearn.http to verify:
+# - Get all issues returns all issues with priority values
+# - Filtering by priority=high returns only HIGH priority issues
+# - Filtering by priority=medium returns only MEDIUM priority issues
+# - Filtering by priority=low returns only LOW priority issues
 ```
 
 ### After Task 2 (Python Scripts):
@@ -238,6 +279,12 @@ dotnet test
 
 # Release build succeeds
 dotnet build -c Release
+
+# Verify API endpoints (optional but recommended)
+# Run requests from LunchAndLearn.http file to ensure:
+# - All endpoints return correct data
+# - Priority filtering works for all three levels
+# - JSON responses show priority as strings (not numbers)
 ```
 
 ---
@@ -250,3 +297,4 @@ dotnet build -c Release
 ✅ Python client accepts `--priority` flag
 ✅ Migration script handles database conversion with backup
 ✅ Code compiles at each task completion
+✅ HTTP test file (.http) updated with priority-based requests

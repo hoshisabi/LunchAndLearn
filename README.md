@@ -9,7 +9,7 @@ This is a simple web API application built with:
 - **SQLite** - Lightweight database for storing issue data
 - **Python** - Utility scripts for database seeding and API client testing
 
-The application manages a simple issue tracking system with endpoints to query issues and filter by urgency. It serves as a practical example for exploring how different AI code assistants can help with various development tasks.
+The application manages a simple issue tracking system with a three-level priority system (LOW, MEDIUM, HIGH) and endpoints to query and filter issues by priority level. It serves as a practical example for exploring how different AI code assistants can help with various development tasks.
 
 ---
 
@@ -143,11 +143,10 @@ The API will start on `http://localhost:5099` (HTTP) or `https://localhost:7181`
 # List all issues (table format)
 uv run python client.py
 
-# Show only urgent issues
-uv run python client.py --urgent
-
-# Show only non-urgent issues
-uv run python client.py --no-urgent
+# Filter by priority level
+uv run python client.py --priority high
+uv run python client.py --priority medium
+uv run python client.py --priority low
 
 # Output as JSON
 uv run python client.py --format json
@@ -165,11 +164,10 @@ uv run python client.py --url http://localhost:7181
 # Get all issues
 curl http://localhost:5099/issues
 
-# Get only urgent issues
-curl "http://localhost:5099/issues?urgent=true"
-
-# Get only non-urgent issues
-curl "http://localhost:5099/issues?urgent=false"
+# Filter by priority level
+curl "http://localhost:5099/issues?priority=high"
+curl "http://localhost:5099/issues?priority=medium"
+curl "http://localhost:5099/issues?priority=low"
 ```
 
 Or simply open `http://localhost:5099/issues` in your browser.
@@ -193,11 +191,11 @@ dotnet test LunchAndLearn.Tests/LunchAndLearn.Tests.csproj
 ```
 
 Expected output:
-- **7 total tests** should pass
+- **8 total tests** should pass
 - Tests cover:
-  - Issue model creation and equality
+  - Issue model creation and equality with Priority enum
   - Database operations (add, query, filtering)
-  - Filtering by urgency
+  - Filtering by priority level (HIGH, MEDIUM, LOW)
   - Primary key constraints
 
 ### Manual Testing
@@ -235,13 +233,12 @@ To verify the application is working end-to-end:
    # Get all issues
    uv run python client.py
    
-   # Filter for urgent issues only
-   uv run python client.py --urgent
-   
-   # Filter for non-urgent issues only
-   uv run python client.py --no-urgent
+   # Filter by priority level
+   uv run python client.py --priority high
+   uv run python client.py --priority medium
+   uv run python client.py --priority low
    ```
-   ✅ Should return a formatted table of issues with all fields populated
+   ✅ Should return a formatted table of issues with all fields populated, including priority indicators
 
 ---
 
