@@ -23,12 +23,12 @@ class LunchAndLearnClient:
         """
         self.base_url = base_url.rstrip('/')
     
-    def get_issues(self, urgent: Optional[bool] = None) -> list:
+    def get_issues(self, priority: Optional[str] = None) -> list:
         """
         Fetch all issues from the API.
         
         Args:
-            urgent: Optional filter - True for urgent only, False for non-urgent only, None for all
+            priority: Optional filter - 'low', 'medium', or 'high', or None for all
         
         Returns:
             List of issue dictionaries
@@ -38,8 +38,8 @@ class LunchAndLearnClient:
         """
         try:
             params = {}
-            if urgent is not None:
-                params["urgent"] = str(urgent).lower()
+            if priority is not None:
+                params["priority"] = priority.lower()
             
             response = requests.get(
                 f"{self.base_url}/issues",
@@ -57,17 +57,17 @@ class LunchAndLearnClient:
         except requests.exceptions.RequestException as e:
             raise requests.RequestException(f"API request failed: {e}")
     
-    def print_issues(self, issues: Optional[list] = None, format: str = "table", urgent: Optional[bool] = None):
+    def print_issues(self, issues: Optional[list] = None, format: str = "table", priority: Optional[str] = None):
         """
         Print issues in a formatted way.
         
         Args:
             issues: List of issues to print. If None, fetches from API.
             format: Output format - 'table', 'json', or 'simple'
-            urgent: Optional filter - True for urgent only, False for non-urgent only, None for all
+            priority: Optional filter - 'low', 'medium', or 'high', or None for all
         """
         if issues is None:
-            issues = self.get_issues(urgent=urgent)
+            issues = self.get_issues(priority=priority)
         
         if not issues:
             print("No issues found.")
@@ -76,16 +76,18 @@ class LunchAndLearnClient:
         if format == "json":
             print(json.dumps(issues, indent=2))
         elif format == "simple":
+            priority_emoji = {"high": "🔴", "medium": "🟡", "low": "🟢"}
             for issue in issues:
-                urgent = "🔴 URGENT" if issue.get("isUrgent") else "⚪"
-                print(f"{urgent} {issue.get('code')}: {issue.get('shortDescription')}")
+                p = issue.get("priority", "").lower()
+                emoji = priority_emoji.get(p, "⚪")
+                print(f"{emoji} {issue.get('code')}: {issue.get('shortDescription')}")
         else:  # table format
-            print(f"\n{'Code':<12} {'Urgent':<8} {'Description':<40}")
+            print(f"\n{'Code':<12} {'Priority':<8} {'Description':<40}")
             print("-" * 70)
             for issue in issues:
-                urgent = "Yes" if issue.get("isUrgent") else "No"
+                p = issue.get("priority", "N/A")
                 desc = issue.get("shortDescription", "")[:38]
-                print(f"{issue.get('code'):<12} {urgent:<8} {desc:<40}")
+                print(f"{issue.get('code'):<12} {p:<8} {desc:<40}")
             print(f"\nTotal: {len(issues)} issue(s)\n")
 
 
@@ -97,10 +99,11 @@ def main():
         epilog="""
 Examples:
   python client.py                    # List all issues in table format
-  python client.py --urgent           # Show only urgent issues
-  python client.py --no-urgent        # Show only non-urgent issues
+  python client.py --priority high    # Show only high priority issues
+  python client.py --priority medium  # Show only medium priority issues
+  python client.py --priority low     # Show only low priority issues
   python client.py --format json      # Output as JSON
-  python client.py --format simple    # Simple one-line format
+  python client.py --format simple    # Simple one-line format with emoji
   python client.py --url http://localhost:7181  # Use different URL
         """
     )
@@ -115,31 +118,18 @@ Examples:
         default="table",
         help="Output format (default: table)"
     )
-    urgent_group = parser.add_mutually_exclusive_group()
-    urgent_group.add_argument(
-        "--urgent",
-        action="store_true",
-        help="Show only urgent issues"
-    )
-    urgent_group.add_argument(
-        "--no-urgent",
-        action="store_true",
-        help="Show only non-urgent issues"
+    parser.add_argument(
+        "--priority",
+        choices=["high", "medium", "low"],
+        help="Filter issues by priority (high, medium, or low)"
     )
     
     args = parser.parse_args()
     
-    # Determine urgent filter value
-    urgent_filter = None
-    if args.urgent:
-        urgent_filter = True
-    elif args.no_urgent:
-        urgent_filter = False
-    
     client = LunchAndLearnClient(base_url=args.url)
     
     try:
-        client.print_issues(format=args.format, urgent=urgent_filter)
+        client.print_issues(format=args.format, priority=args.priority)
     except ConnectionError as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
