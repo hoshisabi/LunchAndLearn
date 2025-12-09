@@ -83,6 +83,40 @@ public enum Priority
 
 ---
 
+### Subtask 1d: Update HTTP Test File (1 min)
+**File**: `LunchAndLearn/LunchAndLearn.http` (modify)
+
+**Changes needed**:
+- Update HTTP request examples to use `?priority=low|medium|high` instead of `?urgent=true|false`
+- Add requests for each priority level (HIGH, MEDIUM, LOW)
+- Keep the "Get all issues" request without a filter
+
+**Example updated requests**:
+```
+### Get all issues
+GET {{LunchAndLearn_HostAddress}}/issues
+Accept: application/json
+
+### Get only HIGH priority issues
+GET {{LunchAndLearn_HostAddress}}/issues?priority=high
+Accept: application/json
+
+### Get only MEDIUM priority issues
+GET {{LunchAndLearn_HostAddress}}/issues?priority=medium
+Accept: application/json
+
+### Get only LOW priority issues
+GET {{LunchAndLearn_HostAddress}}/issues?priority=low
+Accept: application/json
+```
+
+**What the AI tool should do**:
+- Replace any `?urgent=` query parameters with `?priority=` parameters
+- Add example requests for each priority level
+- Ensure requests use lowercase priority values (matching API behavior)
+
+---
+
 ## Task 2: Python Scripts & Migration (8-9 minutes)
 
 ### Subtask 2a: Transform CSV Data (2-3 min)
@@ -222,7 +256,6 @@ dotnet test
 ```bash
 # No verification needed - documentation review only
 ```
-
 ---
 
 ## Final Verification (All Tasks Complete)
@@ -239,6 +272,12 @@ dotnet test
 # Release build succeeds
 dotnet build -c Release
 ```
+# Optional: Test API endpoints using .http file
+# Run the requests in LunchAndLearn.http to verify:
+# - Get all issues returns all issues with priority values
+# - Filtering by priority=high returns only HIGH priority issues
+# - Filtering by priority=medium returns only MEDIUM priority issues
+# - Filtering by priority=low returns only LOW priority issues
 
 ---
 
@@ -250,3 +289,4 @@ dotnet build -c Release
 ✅ Python client accepts `--priority` flag
 ✅ Migration script handles database conversion with backup
 ✅ Code compiles at each task completion
+✅ HTTP test file (.http) updated with priority-based requests
