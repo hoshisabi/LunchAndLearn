@@ -13,15 +13,11 @@ import sys
 def seed_database(db_path: str = "issues.db"):
     """
     Seeds the Issues table with data from issues.csv if the table is empty.
+    Creates the database and table if they don't exist.
     
     Args:
         db_path: Path to the SQLite database file
     """
-    # Check if database exists
-    if not os.path.exists(db_path):
-        print(f"Database file '{db_path}' not found. Please ensure the database is created first.")
-        return False
-    
     csv_path = os.path.join(os.path.dirname(db_path) if os.path.dirname(db_path) else ".", "issues.csv")
     if not os.path.exists(csv_path):
         print(f"CSV file '{csv_path}' not found.")
@@ -31,12 +27,21 @@ def seed_database(db_path: str = "issues.db"):
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
         
-        # Check if table exists
+        # Check if table exists, create if it doesn't
         cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='Issues'")
         if not cursor.fetchone():
-            print("Table 'Issues' does not exist. Please run the application first to create the database schema.")
-            conn.close()
-            return False
+            print(f"Table 'Issues' does not exist. Creating database schema...")
+            # Create the Issues table matching Entity Framework schema (with Priority column)
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS Issues (
+                    Code TEXT NOT NULL PRIMARY KEY,
+                    ShortDescription TEXT NOT NULL,
+                    LongDescription TEXT NOT NULL,
+                    Priority TEXT NOT NULL
+                )
+            """)
+            conn.commit()
+            print("Database schema created successfully.")
         
         # Check if table already has data
         cursor.execute("SELECT COUNT(*) FROM Issues")
