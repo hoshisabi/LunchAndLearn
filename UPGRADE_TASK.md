@@ -214,6 +214,7 @@ Accept: application/json
    - Test `print_issues()` with different formats (table, json, simple)
    - Use mocking to avoid requiring a running server
    - Verify urgent filtering logic works correctly
+   - Note that pytest is installed using uv in the "dev" environment
 
 **Expected result**: 
 - 8 passing C# tests (up from 7)
