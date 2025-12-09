@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using LunchAndLearn;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,8 @@ builder.Services.AddOpenApi();
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    // Serialize enums as strings (e.g., "high", "medium", "low") instead of numbers
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
 });
 
 // Add DbContext for SQLite
@@ -40,17 +43,19 @@ app.MapGet("/issues", async (IssueDbContext dbContext, HttpContext httpContext) 
 {
     var query = dbContext.Issues.AsQueryable();
     
-    // Check for urgent filter in query string
-    if (httpContext.Request.Query.TryGetValue("urgent", out var urgentValue))
+    // Check for priority filter in query string
+    if (httpContext.Request.Query.TryGetValue("priority", out var priorityValue))
     {
-        if (bool.TryParse(urgentValue.ToString(), out var urgent))
+        var priorityStr = priorityValue.ToString();
+        // Case-insensitive parsing: accepts 'high', 'HIGH', 'High', etc.
+        if (Enum.TryParse<Priority>(priorityStr, ignoreCase: true, out var priority))
         {
-            query = query.Where(i => i.IsUrgent == urgent);
+            query = query.Where(i => i.Priority == priority);
         }
     }
     
     return await query.ToListAsync();
 })
-.WithName("GetIssues");  // Updated name for clarity
+.WithName("GetIssues");
 
 app.Run();
