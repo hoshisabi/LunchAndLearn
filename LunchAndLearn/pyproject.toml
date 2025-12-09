@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Python tools for LunchAndLearn application (seeding and API client)"
 requires-python = ">=3.8"
 dependencies = [
-    "pytest>=8.3.5",
+    # Main required dependency for the package's functionality:
     "requests>=2.31.0",
     # Note: sqlite3 is a built-in Python module (standard library)
     # and does not need to be listed as a dependency
@@ -12,11 +12,11 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=7.4.0",
+    # Development dependencies like testing and linting tools belong here:
+    "pytest>=8.3.5", # Use the higher, more specific version floor here
     "pytest-cov>=4.1.0",
     "black>=23.0.0",
     "ruff>=0.1.0",
     "mypy>=1.5.0",
     "types-requests>=2.31.0",
 ]
-
